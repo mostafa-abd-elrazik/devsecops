@@ -72,10 +72,10 @@ pipeline {
         stage('Build Images') {
             steps {
                 /* sh 'echo Image build preauthorized-integration-module'
-                sh 'docker build --network host -t sumergerepo/preauthorized-integration-module:beta ./preauthorized-integration-module/' */
+                sh 'docker build --tls-verifyfalse -t docker.idp.system.sumerge.local/devsecops2:0.1 .' */
                 
                 sh 'echo Image build devsecops2'
-                sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
+                // sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
                 
                 //sh 'echo Image build ebc-switch-connector'
                 //sh 'docker build --network host -t sumergerepo/ebc-switch-connector:alpha ./ebc-switch-connector/'
@@ -87,7 +87,7 @@ pipeline {
 
         stage("TRIVY"){
             steps{
-                sh " trivy image docker.idp.system.sumerge.local/devsecops2"
+                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2"
             }
         }
 
@@ -98,14 +98,14 @@ pipeline {
                     sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
 
                     /* sh 'echo Push image preauthorized-integration-module'
-                    sh 'docker push sumergerepo/preauthorized-integration-module:beta'
-                    sh 'docker tag sumergerepo/preauthorized-integration-module:beta sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}'
-                    sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
+                    // sh 'docker push sumergerepo/preauthorized-integration-module:beta'
+                    // sh 'docker tag sumergerepo/preauthorized-integration-module:beta sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}'
+                    // sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
                     
-                    sh 'echo Push image devsecops2'
+                    // sh 'echo Push image devsecops2'
                     sh 'podman push docker.idp.system.sumerge.local/devsecops2 --tls-verify=false'
                     /* sh 'docker tag sumergerepo/ebc-mock-svc:alpha sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}'
-                    sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
+                    // sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
                     
                     // sh 'echo Push image ebc-switch-connector'
                     // sh 'docker push sumergerepo/ebc-switch-connector:alpha'
