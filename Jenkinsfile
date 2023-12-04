@@ -89,7 +89,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId:"localrepo",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
                     
-                    sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
+                    sh "podman login --tls-verify=false -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
 
                     /* sh 'echo Push image preauthorized-integration-module'
                     // sh 'docker push sumergerepo/preauthorized-integration-module:beta'
