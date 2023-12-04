@@ -1,47 +1,155 @@
 pipeline {
-    agent any
+  agent {label "inbound-agent-jdk11"}
     tools {
-        maven 'Maven363'
+        maven 'maven'
     }
-    options {
-        timeout(10)
-        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '5', numToKeepStr: '5')
+
+    environment {
+        SCANNER_HOME=tool 'sonar-scanner'
     }
-    stages {
-        stage('Build') {
+
+    // stages {
+    //     stage('Preparation') {
+    //         steps {   
+    //             git 'https://github.com/koddas/war-web-project.git'
+    //         }
+    //     }
+
+        stage ('Initialize') {
             steps {
-                sh "mvn clean install"
+                withEnv(["PATH=${M2_HOME}/bin:$PATH"]) {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                    echo "building devsecops2 Version 1.0.${BUILD_NUMBER}"
+                    ${M2_HOME}/bin/mvn install
+                '''
+            }
             }
         }
-        stage('upload artifact to nexus') {
-            steps {
-                nexusArtifactUploader artifacts: [
-                    [
-                        artifactId: 'wwp', 
-                        classifier: '', 
-                        file: 'target/wwp-1.0.0.war', 
-                        type: 'war'
-                    ]
-                ], 
-                    credentialsId: 'nexus3', 
-                    groupId: 'koddas.web.war', 
-                    nexusUrl: '10.0.0.91:8081', 
-                    nexusVersion: 'nexus3', 
-                    protocol: 'http', 
-                    repository: 'samplerepo', 
-                    version: '1.0.0'
+
+        stage('Scan check') {
+              steps {
+                script{
+	            def scannerHome = tool 'sonar-scanner';
+                withSonarQubeEnv("sonarqube") { 
+		          sh "${scannerHome}/bin/sonar-scanner --version"
+                }
+              }
             }
         }
-    }
-    post {
-        always{
-            deleteDir()
+
+        stage('Scan') {
+            steps {
+                script {
+                def scannerHome = tool 'sonar-scanner';
+                    withSonarQubeEnv("sonarqube") {
+                    sh "${tool("sonar-scanner")}/bin/sonar-scanner \
+                    -Dsonar.projectKey=devsecops2 \
+                    -Dsonar.sources=. \
+                    -Dsonar.css.node=. \
+                    -Dsonar.host.url=http://sonarqube.k8s.system.local \
+                    -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
+                  }
+                }
+            }
         }
-        failure {
-            echo "sendmail -s mvn build failed receipients@my.com"
+
+        stage("OWASP Dependency Check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
         }
-        success {
-            echo "The job is successful"
+        
+        stage ('Build') {
+            steps {
+                sh 'mvn clean package install -DskipTests' 
+            }
+            post {
+                success {
+                    sh 'echo success'
+                }
+            }
         }
+        
+        stage('Build Images') {
+            steps {
+                /* sh 'echo Image build preauthorized-integration-module'
+                sh 'docker build --network host -t sumergerepo/preauthorized-integration-module:beta ./preauthorized-integration-module/' */
+                
+                sh 'echo Image build devsecops2'
+                sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
+                
+                //sh 'echo Image build ebc-switch-connector'
+                //sh 'docker build --network host -t sumergerepo/ebc-switch-connector:alpha ./ebc-switch-connector/'
+                
+                //sh 'echo Image build ipn-integration-connector'
+                //sh 'docker build --network host -t sumergerepo/preauth-ipn-connector:alpha ./ipn-integration-platform-connector/'
+            }
+        }
+
+        stage("TRIVY"){
+            steps{
+                sh " trivy image docker.idp.system.sumerge.local/devsecops2"
+            }
+        }
+
+        stage('Push images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId:"localrepo",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
+                    
+                    sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
+
+                    /* sh 'echo Push image preauthorized-integration-module'
+                    sh 'docker push sumergerepo/preauthorized-integration-module:beta'
+                    sh 'docker tag sumergerepo/preauthorized-integration-module:beta sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}'
+                    sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
+                    
+                    sh 'echo Push image devsecops2'
+                    sh 'podman push docker.idp.system.sumerge.local/devsecops2 --tls-verify=false'
+                    /* sh 'docker tag sumergerepo/ebc-mock-svc:alpha sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}'
+                    sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
+                    
+                    // sh 'echo Push image ebc-switch-connector'
+                    // sh 'docker push sumergerepo/ebc-switch-connector:alpha'
+                    
+                    // sh 'echo Push image preauth-ipn-connector'
+                    // sh 'docker push sumergerepo/preauth-ipn-connector:alpha'
+                }    
+            }
+        }        
     }
 }
+
+  
+  
+  
+//   stages {
+//     // stage('git') {
+//     //   steps {
+//     //    git 'https://github.com/mostafa-abd-elrazik/devsecops-test.git'
+//     //   }
+//     // }
+//     stage('trivy check') {
+//       steps {
+//         // sleep 360
+//         sh """cat <<EOF >>/etc/containers/registries.conf 
+// [[registry]] 
+// location = "docker.idp.system.sumerge.local" 
+// insecure = true  
+// """
+//         // sh 'cat /etc/containers/registries.conf'
+//         sh 'podman build --tls-verify=false -t docker.idp.system.sumerge.local/dummy-image .'
+//         // sh 'podman build --tls-verify=false -t docker.idp.system.sumerge.local/dummy-image .'
+//         // sh 'buildah build --tls-verify=false -t docker.idp.system.sumerge.local/dummy-image:0.1 .'
+//         sh 'trivy image --insecure  --timeout 7200s  --severity HIGH,CRITICAL http://docker.idp.system.sumerge.local/slave-trivy:latest'
+//         // sh 'podman version'
+//         // sh 'buildah images'
+//         // sh 'buildah build --tls-verify=false -t docker.idp.system.sumerge.local/dummy-image .'
+//         // sh 'trivy --timeout 900s image --severity HIGH,CRITICAL docker.idp.system.sumerge.local/dummy-image'
+//       }
+//     }
+
+//   }
+// }
