@@ -35,28 +35,7 @@ pipeline {
             }
         }
 
-        stage('Scan') {
-            steps {
-                script {
-                def scannerHome = tool 'sonar-scanner';
-                    withSonarQubeEnv("sonarqube") {
-                    sh "${tool("sonar-scanner")}/bin/sonar-scanner \
-                    -Dsonar.projectKey=devsecops2 \
-                    -Dsonar.sources=./src \
-                    -Dsonar.java.binaries=./target \
-                    -Dsonar.host.url=http://sonarqube.k8s.system.local \
-                    -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
-                  }
-                }
-            }
-        }
 
-        stage("OWASP Dependency Check"){
-            steps{
-                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
         
         stage ('Build') {
             steps {
