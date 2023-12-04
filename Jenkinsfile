@@ -87,6 +87,11 @@ pipeline {
 
         stage("TRIVY"){
             steps{
+		    sh """cat <<EOF >>/etc/containers/registries.conf 
+[[registry]] 
+location = "docker.idp.system.sumerge.local" 
+insecure = true  
+"""
                 sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2:0.1"
             }
         }
