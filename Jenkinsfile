@@ -72,7 +72,7 @@ pipeline {
         stage('Build Images') {
             steps {
 
-                sh 'podman build  -t docker.idp.system.sumerge.local/devsecops2:0.1 .'
+                sh 'podman build  -t docker.idp.system.sumerge.local/ebc-mock-svc:0.1 .'
                 
                 sh 'echo Image build devsecops2'
                 // sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
@@ -97,7 +97,7 @@ pipeline {
                     // sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
                     
                     // sh 'echo Push image devsecops2'
-                    sh 'podman push docker.idp.system.sumerge.local/devsecops2:0.1 --tls-verify=false'
+                    sh 'podman push docker.idp.system.sumerge.local/ebc-mock-svc:0.1 --tls-verify=false'
                     /* sh 'docker tag sumergerepo/ebc-mock-svc:alpha sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}'
                     // sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
                     
@@ -117,7 +117,7 @@ pipeline {
 location = "docker.idp.system.sumerge.local" 
 insecure = true  
 """
-                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2:0.1"
+                sh " trivy image --insecure docker.idp.system.sumerge.local/ebc-mock-svc:0.1"
             }
         }
 
