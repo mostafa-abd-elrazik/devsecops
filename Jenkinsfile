@@ -132,7 +132,7 @@ insecure = true
                     -Dsonar.projectKey=devsecops2 \
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target \
-		    -Dsonar.externalIssuesReportPaths="sonar-deps-report.json
+		    -Dsonar.externalIssuesReportPaths=./sonar-deps-report.json
                     -Dsonar.host.url=http://sonarqube.k8s.system.local \
                     -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
                   }
