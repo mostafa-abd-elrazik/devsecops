@@ -42,8 +42,8 @@ pipeline {
                     withSonarQubeEnv("sonarqube") {
                     sh "${tool("sonar-scanner")}/bin/sonar-scanner \
                     -Dsonar.projectKey=devsecops2 \
-                    -Dsonar.sources=. \
-                    -Dsonar.css.node=. \
+                    -Dsonar.sources=./src \
+                    -Dsonar.java.binaries=./target \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local \
                     -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
                   }
