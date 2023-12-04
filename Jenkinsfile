@@ -71,8 +71,8 @@ pipeline {
         
         stage('Build Images') {
             steps {
-                /* sh 'echo Image build preauthorized-integration-module'
-                sh 'docker build --tls-verifyfalse -t docker.idp.system.sumerge.local/devsecops2:0.1 .' */
+
+                sh 'podman build  -t docker.idp.system.sumerge.local/devsecops2:0.1 .'
                 
                 sh 'echo Image build devsecops2'
                 // sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
@@ -85,18 +85,7 @@ pipeline {
             }
         }
 
-        stage("TRIVY"){
-            steps{
-		    sh """cat <<EOF >>/etc/containers/registries.conf 
-[[registry]] 
-location = "docker.idp.system.sumerge.local" 
-insecure = true  
-"""
-                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2:0.1"
-            }
-        }
-
-        stage('Push images') {
+	        stage('Push images') {
             steps {
                 withCredentials([usernamePassword(credentialsId:"localrepo",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
                     
@@ -108,7 +97,7 @@ insecure = true
                     // sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
                     
                     // sh 'echo Push image devsecops2'
-                    sh 'podman push docker.idp.system.sumerge.local/devsecops2 --tls-verify=false'
+                    sh 'podman push docker.idp.system.sumerge.local/devsecops2:0.1 --tls-verify=false'
                     /* sh 'docker tag sumergerepo/ebc-mock-svc:alpha sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}'
                     // sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
                     
@@ -120,6 +109,19 @@ insecure = true
                 }    
             }
         }        
+
+        stage("TRIVY"){
+            steps{
+		    sh """cat <<EOF >>/etc/containers/registries.conf 
+[[registry]] 
+location = "docker.idp.system.sumerge.local" 
+insecure = true  
+"""
+                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2:0.1"
+            }
+        }
+
+
     }
 }
 
