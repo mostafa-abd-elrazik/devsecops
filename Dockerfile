@@ -1,2 +1,1 @@
-FROM busybox
-COPY /target/*.war /usr/local/tomcat/webapps/wwp-1.0.0.war
+FROM sumergerepo/ebc-mock-svc:alpha-1.0.57
