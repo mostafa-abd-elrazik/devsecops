@@ -6,7 +6,7 @@ pipeline {
 
     environment {
         SCANNER_HOME=tool 'sonar-scanner'
-    }
+    } 
 
     stages {
 
@@ -117,10 +117,35 @@ pipeline {
 location = "docker.idp.system.sumerge.local" 
 insecure = true  
 """
-                sh " trivy image --insecure docker.idp.system.sumerge.local/ebc-mock-svc:0.1"
+                sh " trivy image --output=trivy-deps-report.json --format=json --insecure \
+		    docker.idp.system.sumerge.local/ebc-mock-svc:0.1 && ls"
+		sh 'trivy sonarqube trivy-deps-report.json > sonar-deps-report.json && ls'
+            }
+        }
+        stage('Scan') {
+            steps {
+		    sh 'pwd && ls'
+                script {
+                def scannerHome = tool 'sonar-scanner';
+                    withSonarQubeEnv("sonarqube") {
+                    sh "${tool("sonar-scanner")}/bin/sonar-scanner \
+                    -Dsonar.projectKey=devsecops2 \
+                    -Dsonar.sources=./src \
+                    -Dsonar.java.binaries=./target \
+		    -Dsonar.externalIssuesReportPaths="sonar-deps-report.json
+                    -Dsonar.host.url=http://sonarqube.k8s.system.local \
+                    -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
+                  }
+                }
             }
         }
 
+        stage("OWASP Dependency Check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
 
     }
 }
