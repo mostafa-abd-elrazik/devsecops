@@ -8,12 +8,8 @@ pipeline {
         SCANNER_HOME=tool 'sonar-scanner'
     }
 
-    // stages {
-    //     stage('Preparation') {
-    //         steps {   
-    //             git 'https://github.com/koddas/war-web-project.git'
-    //         }
-    //     }
+    stages {
+
 
         stage ('Initialize') {
             steps {
