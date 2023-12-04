@@ -87,7 +87,7 @@ pipeline {
 
         stage("TRIVY"){
             steps{
-                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2"
+                sh " trivy image --insecure docker.idp.system.sumerge.local/devsecops2:0.1"
             }
         }
 
