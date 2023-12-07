@@ -120,7 +120,7 @@ insecure = true
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target/classes \
 		    #-Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
-                    -Dsonar.host.url=http://sonarqube.k8s.system.local \
+                    -Dsonar.host.url=http://sonarqube.k8s.system.local \"
                     
                   }
                 }
