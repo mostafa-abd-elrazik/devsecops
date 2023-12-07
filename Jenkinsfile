@@ -120,7 +120,7 @@ insecure = true
                     -Dsonar.java.binaries=./target/classes \
 		    #-Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local \
-                    -Dsonar.login=sqa_3cfa6296062bd81becfbb97b4d7342da6f00b475"
+                    -Dsonar.login=sqp_95338741a5097ba91944211c2ab3a9702a237157"
                   }
                 }
             }
