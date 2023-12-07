@@ -116,11 +116,12 @@ insecure = true
                     withSonarQubeEnv("sonarqube") {
                     sh "${tool("sonar-scanner")}/bin/sonar-scanner -X \
                     -Dsonar.projectKey=security-check \
+		    -Dsonar.login=sqa_f05cb4ac431d071812d87b54ef77e1f78bb1a457"
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target/classes \
 		    #-Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local \
-                    -Dsonar.login=sqa_f05cb4ac431d071812d87b54ef77e1f78bb1a457"
+                    
                   }
                 }
             }
