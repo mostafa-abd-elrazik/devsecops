@@ -108,12 +108,12 @@ insecure = true
                 def scannerHome = tool 'sonar-scanner';
                     withSonarQubeEnv("sonarqube") {
                     sh "${tool("sonar-scanner")}/bin/sonar-scanner \
-                    -Dsonar.projectKey=devsecops2 \
+                    -Dsonar.projectKey=devsecops \
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target \
 		    -Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local \
-                    -Dsonar.login=sqa_876495118ce969910596909c381be31900bdb02b"
+                    -Dsonar.login=sqp_fb7304beaf7e26f11e3f6f66b5d001acfb3fd239"
                   }
                 }
             }
