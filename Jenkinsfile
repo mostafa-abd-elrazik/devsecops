@@ -107,7 +107,7 @@ insecure = true
                 script {
                 def scannerHome = tool 'sonar-scanner';
                     withSonarQubeEnv("sonarqube") {
-                    sh "${tool("sonar-scanner")}/bin/sonar-scanner \
+                    sh "${tool("sonar-scanner")}/bin/sonar-scanner -X \
                     -Dsonar.projectKey=security-check \
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target \
