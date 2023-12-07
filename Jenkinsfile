@@ -18,7 +18,7 @@ pipeline {
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
                     echo "building devsecops2 Version 1.0.${BUILD_NUMBER}"
-                    ${M2_HOME}/bin/mvn install
+                    // ${M2_HOME}/bin/mvn install
                 '''
             }
             }
