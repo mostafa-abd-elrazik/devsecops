@@ -51,9 +51,13 @@ pipeline {
         stage('Build Images') {
             steps {
 
-                sh 'podman build  -t docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 .'
+                // sh 'podman build  -t docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 .'
                 
-                sh 'echo Image build devsecops2'
+                sh 'echo skipping...'
+
+
+
+		    
                 // sh 'podman build --network host -t docker.idp.system.sumerge.local/devsecops2 ./ebc-mock-svc/'
                 
                 //sh 'echo Image build ebc-switch-connector'
@@ -67,16 +71,19 @@ pipeline {
 	        stage('Push images') {
             steps {
                 withCredentials([usernamePassword(credentialsId:"localrepo",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
-                    
-                    sh "podman login --tls-verify=false -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
+                    sh 'echo skipping ...'
+                    // sh "podman login --tls-verify=false -u ${USERNAME} -p ${PASSWORD} docker.idp.system.sumerge.local"
+                    // sh 'podman push docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 --tls-verify=false'
 
+
+
+			
                     /* sh 'echo Push image preauthorized-integration-module'
                     // sh 'docker push sumergerepo/preauthorized-integration-module:beta'
                     // sh 'docker tag sumergerepo/preauthorized-integration-module:beta sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}'
                     // sh 'docker push sumergerepo/preauthorized-integration-module:beta-1.0.${BUILD_NUMBER}' */
                     
                     // sh 'echo Push image devsecops2'
-                    sh 'podman push docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 --tls-verify=false'
                     /* sh 'docker tag sumergerepo/ebc-mock-svc:alpha sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}'
                     // sh 'docker push sumergerepo/ebc-mock-svc:alpha-1.0.${BUILD_NUMBER}' */
                     
