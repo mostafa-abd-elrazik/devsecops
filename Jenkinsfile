@@ -96,18 +96,7 @@ pipeline {
             }
         }        
 
-        stage("TRIVY"){
-            steps{
-		    sh """cat <<EOF >>/etc/containers/registries.conf 
-[[registry]] 
-location = "docker.idp.system.sumerge.local" 
-insecure = true  
-"""
-                sh " trivy image --timeout 900s --output=trivy-deps-report.json --format=json --insecure \
-		    docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 "
-		sh 'trivy sonarqube trivy-deps-report.json -- filePath=Dockerfile > sonar-deps-report.json' \
-            }
-        }
+
         stage('Scan') {
             steps {
 		    sh 'pwd && ls'
@@ -127,6 +116,18 @@ insecure = true
             }
         }
 
+        stage("TRIVY"){
+            steps{
+		    sh """cat <<EOF >>/etc/containers/registries.conf 
+[[registry]] 
+location = "docker.idp.system.sumerge.local" 
+insecure = true  
+"""
+                sh " trivy image --timeout 900s --output=trivy-deps-report.json --format=json --insecure \
+		    docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 "
+		sh 'trivy sonarqube trivy-deps-report.json -- filePath=Dockerfile > sonar-deps-report.json' \
+            }
+        }
         stage("OWASP Dependency Check"){
             steps{
                 dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
