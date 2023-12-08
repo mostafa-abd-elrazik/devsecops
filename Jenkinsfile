@@ -104,8 +104,8 @@ location = "docker.idp.system.sumerge.local"
 insecure = true  
 """
                 sh " trivy image --timeout 900s --output=trivy-deps-report.json --format=json --insecure \
-		    docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 && ls"
-		sh 'trivy sonarqube trivy-deps-report.json > sonar-deps-report.json && ls'
+		    docker.idp.system.sumerge.local/ebc-mock-svc-test:0.1 "
+		sh 'trivy sonarqube trivy-deps-report.json -- filePath=Dockerfile > sonar-deps-report.json' \
             }
         }
         stage('Scan') {
