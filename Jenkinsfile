@@ -110,6 +110,14 @@ insecure = true
             }
         }	    
 
+
+        stage("OWASP Dependency Check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan target/', odcInstallation: 'dp'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+	    
         stage('Scan') {
             steps {
 		    sh 'pwd && ls'
@@ -122,7 +130,8 @@ insecure = true
                     -Dsonar.sources=./src \
                     -Dsonar.java.binaries=./target/classes \
 		    -Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
-                    -Dsonar.host.url=http://sonarqube.k8s.system.local "
+                    -Dsonar.host.url=http://sonarqube.k8s.system.local " \
+                    -Dsonar.dependencyCheck.htmlReportPath=./sonar.dependencyCheck.htmlReportPath
                     
                   }
                 }
@@ -133,12 +142,7 @@ insecure = true
 
 	    
 	    
-        stage("OWASP Dependency Check"){
-            steps{
-                dependencyCheck additionalArguments: '--scan target/', odcInstallation: 'dp'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
+
 
     }
 }
