@@ -7,6 +7,13 @@
   <name>WAR Web Project</name>
   <description>A very simple Maven-enabled WAR web project</description>
   <dependencies>
+
+    <dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <version>1.4.200</version>
+    <scope>test</scope>
+  </dependency>
   	<dependency>
   		<groupId>com.google.code.gson</groupId>
   		<artifactId>gson</artifactId>
