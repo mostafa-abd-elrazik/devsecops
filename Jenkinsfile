@@ -131,7 +131,7 @@ insecure = true
                     -Dsonar.java.binaries=./target/classes \
 		    -Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local  \
-                    -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.xml "
+                    -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.json "
                     
                   }
                 }
