@@ -113,7 +113,7 @@ insecure = true
 
         stage("OWASP Dependency Check"){
             steps{
-                dependencyCheck additionalArguments: '--scan target/ --format JSON', odcInstallation: 'dp'
+                dependencyCheck additionalArguments: '--scan target/ --format HTML', odcInstallation: 'dp'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
@@ -131,7 +131,7 @@ insecure = true
                     -Dsonar.java.binaries=./target/classes \
 		    -Dsonar.externalIssuesReportPaths=./sonar-deps-report.json \
                     -Dsonar.host.url=http://sonarqube.k8s.system.local  \
-                    -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.json "
+                    -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.html "
                     
                   }
                 }
