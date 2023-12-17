@@ -113,7 +113,7 @@ insecure = true
 
         stage("OWASP Dependency Check"){
             steps{
-                dependencyCheck additionalArguments: '--scan target/', odcInstallation: 'dp'
+                dependencyCheck additionalArguments: '--scan target/ --format JSON', odcInstallation: 'dp'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
