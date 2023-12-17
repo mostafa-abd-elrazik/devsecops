@@ -130,15 +130,23 @@ insecure = true
         }
 
 
-        stage("OWASP Dependency Check"){
+stage("OWASP Dependency Check"){
             steps{
-                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
+                dependencyCheck additionalArguments: '--scan target/', odcInstallation: 'dp'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
+	    
+	    
+//         stage("OWASP Dependency Check"){
+//             steps{
+//                 dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-check'
+//                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+//             }
+//         }
 
-    }
-}
+//     }
+// }
 
   
   
